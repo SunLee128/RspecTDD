@@ -238,3 +238,141 @@ RSpec.describe 'have_attributes matcher' do
     it { is_expected.to have_attributes(name: 'Stone Cold Steve Austin', finishing_move: 'Stunner') }
   end
 end
+
+RSpec.describe 'include matcher' do
+  describe 'hot chocolate' do
+    it 'checks for substring inclusion' do
+      expect(subject).to include('hot')
+      expect(subject).to include('choc')
+      expect(subject).to include('late')
+    end
+
+    it { is_expected.to include('choc') }
+  end
+
+  describe [10, 20, 30] do
+    it 'checks for inclusion in the array, regardless of order' do
+      expect(subject).to include(10)
+      expect(subject).to include(10, 20)
+      expect(subject).to include(30, 20)
+    end
+
+    it { is_expected.to include(20, 30, 10) }
+  end
+
+  describe ({ a: 2, b: 4 }) do
+    it 'can check for key existence' do
+      expect(subject).to include(:a)
+      expect(subject).to include(:a, :b)
+      expect(subject).to include(:b, :a)
+    end
+
+    it 'can check for key-value pair' do
+      expect(subject).to include(a: 2)
+    end
+
+    it { is_expected.to include(:b) }
+    it { is_expected.to include(b: 4) }
+  end
+end
+RSpec.describe 'raise_error matcher' do
+
+  def some_method
+    x
+  end
+
+  class CustomError < StandardError; end
+
+  it 'can check for a specific error being raised' do
+    expect { some_method }.to raise_error(NameError)
+    expect { 10 / 0 }.to raise_error(ZeroDivisionError)
+  end
+
+  it 'can check for a user-created error' do
+    expect { raise CustomError }.to raise_error(CustomError)
+  end
+end
+class HotChocolate
+  def drink
+    'Delicious'
+  end
+
+  def discard
+    'PLOP!'
+  end
+
+  def purchase(number)
+    "Awesome, I just purchased #{number} more hot chocolate beverages!"
+  end
+end
+
+RSpec.describe HotChocolate do
+  it 'confirms that an object can respond to a method' do
+    expect(subject).to respond_to(:drink)
+    expect(subject).to respond_to(:drink, :discard)
+    expect(subject).to respond_to(:drink, :discard, :purchase)
+  end
+
+  it 'confirms an object can respond to a method with arguments' do
+    expect(subject).to respond_to(:purchase)
+    expect(subject).to respond_to(:purchase).with(1).arguments
+  end
+
+  it { is_expected.to respond(:purchase, :discard) }
+  it { is_expected.to respond(:purchase).with(1).arguments }
+end
+
+RSpec.describe 'satisfy matcher' do
+  # subject { 'racecar' }
+  subject { 'racecars' }
+
+  it 'is a palindrome' do
+    expect(subject).to satisfy { |value| value == value.reverse  }
+  end
+
+  it 'can accept a custom error message' do
+    expect(subject).to satisfy('be a palindrome') do |value|
+      value == value.reverse
+    end
+  end
+end
+
+RSpec.describe 'not_to method' do
+  it 'checks for the inverse of a matcher' do
+    expect(5).not_to eq(10)
+    expect([1, 2, 3]).not_to equal([1, 2, 3])
+    expect(10).not_to be_odd
+    expect([1, 2, 3]).not_to be_empty
+
+    expect(nil).not_to be_truthy
+
+    expect('Philadelphia').not_to start_with('car')
+    expect('Philadelphia').not_to end_with('city')
+
+    expect(5).not_to respond_to(:length)
+
+    expect([:a, :b, :c]).not_to include(:d)
+
+    expect { 11 / 3 }.not_to raise_error
+  end
+end
+
+RSpec.describe 'not_to method' do
+  it 'checks for the inverse of a matcher' do
+    expect(5).not_to eq(10)
+    expect([1, 2, 3]).not_to equal([1, 2, 3])
+    expect(10).not_to be_odd
+    expect([1, 2, 3]).not_to be_empty
+
+    expect(nil).not_to be_truthy
+
+    expect('Philadelphia').not_to start_with('car')
+    expect('Philadelphia').not_to end_with('city')
+
+    expect(5).not_to respond_to(:length)
+
+    expect([:a, :b, :c]).not_to include(:d)
+
+    expect { 11 / 3 }.not_to raise_error
+  end
+end
